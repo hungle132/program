@@ -87,12 +87,99 @@ unsigned char arr3[3] = {0x01,0x01,0x01};
 unsigned char arr2[3] = {0xFD,0xFB,0xF7};
 
 
-//unsigned char arr2[4] = {0x20,0x10,0x08,0x04};
-//unsigned char arr3[4] = {0xF1, 0xF5, 0xF5, 0xF1};
 
 
 enum dis{a,b,c}state;
 enum dis1{a1,a2,a3}s;
+enum joy{start,wait,up,down,but1,but2}move;
+enum but{up1,down1,wait1}m;
+unsigned short vak = 0x00;
+unsigned char flag = 0x01;
+unsigned char flag1 = 0x01;
+unsigned char d = 0x00;
+unsigned char u = 0x00;
+unsigned char ball = 0x08;
+void joystick(){
+	d = ~PINA & 0x01;
+	u = ~PINA & 0x02;
+	switch(move){
+		case start:
+			move = wait;
+			break;
+		case wait:
+			if (u){
+				move = up;
+			}
+			else if (d){
+				move = down;
+			}
+			else{
+				move = wait;
+			}
+			break;
+		case up:
+
+		if (flag != 0){
+			for (unsigned int i = 0; i < 3; i++){
+			arr[i] = arr[i] >> 1;
+			}
+			flag--;
+			flag1++;
+			}
+		move = but1;
+
+			break;
+		case down:
+
+		if (flag1 != 0){
+		for (unsigned int i = 0; i < 3; i++){
+		arr[i] = arr[i] << 1 | 0x01;
+		}
+		flag1--;
+		flag++;
+		}
+		move = but2;
+			break;
+
+		case but1:
+			if (u){
+			move = but1;
+			}
+			else if (!u){
+			move = wait;
+			}
+			break;
+		case but2:
+			if (d){
+			move = but2;
+			}	
+			else if (!d){
+			move = wait;
+			}
+		default:
+			
+			move = start;
+	}
+	switch(move){
+		case start:
+			break;
+		case wait:
+			break;
+		case up:
+			
+
+			break;
+
+		case down:
+
+			break;
+		case but1:
+			break;
+		case but2:
+			break;
+	}
+		
+}
 void led(){
 
 	switch(state){
@@ -141,35 +228,34 @@ void show(){
 	PORTC = p1;
 	PORTD = r1;
 }
+enum balls{reset,start,bounce,bounce1} bal;
+void ballm(){
+	PORTC = ball;
+	PORTD = 0xFB;
+}
 
 
-//void Demo_Tick() {
 
-
-//	for (unsigned int i = 0; i < 4; i++){
-//	pattern = arr2[i];
-//	row = arr3[i];
-//	PORTC = pattern;
-//	PORTD = row;
-//	}
-//}
 
 
 int main(void) {
     /* Insert DDR and PORT initializations */
 DDRA = 0x00; PORTA = 0xFF;
-DDRB = 0xFF; PORTB = 0x00;
+DDRB = 0x00; PORTB = 0xFF;
 DDRC = 0xFF; PORTC = 0x00;
 DDRD = 0xFF; PORTD = 0x00;
 
-//ADC_init();
-//TimerOn();
-//TimerSet(1);
+ADC_init();
+TimerOn();
+TimerSet(1);
     while (1) {
+	
 
-	led();
 	show();
-//	    while(!TimerFlag);
+	led();
+	joystick();
+	ballm();
+   // while(!TimerFlag);
 //	    TimerFlag = 0;
     }
     return 1;
