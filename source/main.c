@@ -228,10 +228,25 @@ void show(){
 	PORTC = p1;
 	PORTD = r1;
 }
-enum balls{reset,start,bounce,bounce1} bal;
+unsigned char ballrow = 0xFB;
+enum balls{reset,startball,bounce,bounce1} bal;
 void ballm(){
+	switch(bal){
+	case startball:
+//	PORTC = ball;
+//	PORTD = ballrow;
+	bal = startball;
+	break;
+	case bounce:
+	break;
+	case bounce1:
+	break;
+	case reset:
+	break;
+	
+	}
 	PORTC = ball;
-	PORTD = 0xFB;
+	PORTD = ballrow;
 }
 
 
