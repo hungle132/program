@@ -81,15 +81,18 @@ unsigned char row = 0x00;
 unsigned char arr1[3] = {0x80,0x80,0x80};
 unsigned char arr[3] = {0xFD,0xFB,0xF7};
 
+unsigned char p1 = 0x00;
+unsigned char r1 = 0x00;
+unsigned char arr3[3] = {0x01,0x01,0x01};
+unsigned char arr2[3] = {0xFD,0xFB,0xF7};
 
 
-
-unsigned char arr2[4] = {0x20,0x10,0x08,0x04};
-unsigned char arr3[4] = {0xF1, 0xF5, 0xF5, 0xF1};
+//unsigned char arr2[4] = {0x20,0x10,0x08,0x04};
+//unsigned char arr3[4] = {0xF1, 0xF5, 0xF5, 0xF1};
 
 
 enum dis{a,b,c}state;
-
+enum dis1{a1,a2,a3}s;
 void led(){
 
 	switch(state){
@@ -116,6 +119,29 @@ void led(){
 
 }
 
+void show(){
+	switch(s){
+
+		case a1:
+			p1 = arr3[0];
+			r1 = arr2[0];
+			s = a2;
+			break;
+		case a2:
+			p1 = arr3[1];
+			r1 = arr2[1];
+			s = a3;
+			break;
+		case a3:
+			p1 = arr3[2];
+			r1 = arr2[2];
+			s = a1;
+			break;
+	}
+	PORTC = p1;
+	PORTD = r1;
+}
+
 
 //void Demo_Tick() {
 
@@ -137,13 +163,14 @@ DDRC = 0xFF; PORTC = 0x00;
 DDRD = 0xFF; PORTD = 0x00;
 
 //ADC_init();
-TimerOn();
-TimerSet(1);
+//TimerOn();
+//TimerSet(1);
     while (1) {
-	led();
 
-	    while(!TimerFlag);
-	    TimerFlag = 0;
+	led();
+	show();
+//	    while(!TimerFlag);
+//	    TimerFlag = 0;
     }
     return 1;
 }
