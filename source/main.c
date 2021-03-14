@@ -98,8 +98,9 @@ unsigned char flag = 0x01;
 unsigned char flag1 = 0x01;
 unsigned char d = 0x00;
 unsigned char u = 0x00;
-unsigned char ball = 0x08;
+//unsigned char ball = 0x08;
 void joystick(){
+//	TimerSet(1);
 	d = ~PINA & 0x01;
 	u = ~PINA & 0x02;
 	switch(move){
@@ -181,7 +182,7 @@ void joystick(){
 		
 }
 void led(){
-
+//	TimerSet(1);
 	switch(state){
 		case a:
 			pattern = arr1[0];
@@ -207,6 +208,7 @@ void led(){
 }
 
 void show(){
+//	TimerSet(1);
 	switch(s){
 
 		case a1:
@@ -224,29 +226,82 @@ void show(){
 			r1 = arr2[2];
 			s = a1;
 			break;
+		default:
+			s = a1;
+			break;
 	}
 	PORTC = p1;
 	PORTD = r1;
 }
-unsigned char ballrow = 0xFB;
-enum balls{reset,startball,bounce,bounce1} bal;
+unsigned char ballrow = 0xFB;//middlerow
+unsigned char ballchecker = 0x04;
+unsigned char ball = 0x08;
+unsigned char test = 0x10;
+unsigned char test1 = 0xBF;
+//unsigned long balltime = 0x00;
+unsigned char ballrowarr[1] = {0xFB};
+unsigned char ballcol[2] = {0x08,0x10,0x20,0x40};
+unsigned char col = 0x00;
+unsigned char r = 0x00;
+enum balls{startball,bounce,bounce1,bounce2,bounce3,reset} bal;
 void ballm(){
+	//TimerSet(1000);
 	switch(bal){
 	case startball:
-//	PORTC = ball;
-//	PORTD = ballrow;
-	bal = startball;
-	break;
+		bal = bounce;
+		break;
 	case bounce:
-	break;
+			r = 0xFB;
+			col = 0x08;
+			bal = bounce1;
+
+		break;
+
 	case bounce1:
+		r = 0xFB;
+		col = 0x10;
+		bal = bounce2;
+		break;
+	case bounce2:
+		r = 0xFB;
+		col = 0x20;
+		bal = bounce3;
+		break;
+	case bounce3:
+		r = 0xFB;
+		col = 0x40;
+		bal = bounce;
+		break;
+	case reset:
+		break;
+	default:
+		bal = startball;
+		break;
+	}
+	switch(bal){
+	case startball:
+		break;
+	case bounce:
+
+		break;
+
+	case bounce1:
+		break;
+
+	case bounce2:
+	break;
+	case bounce3:
 	break;
 	case reset:
 	break;
-	
 	}
-	PORTC = ball;
-	PORTD = ballrow;
+
+
+	
+	
+
+	PORTC = col;
+	PORTD = r;
 }
 
 
@@ -259,19 +314,21 @@ DDRA = 0x00; PORTA = 0xFF;
 DDRB = 0x00; PORTB = 0xFF;
 DDRC = 0xFF; PORTC = 0x00;
 DDRD = 0xFF; PORTD = 0x00;
-
+unsigned long balltime = 0;
 ADC_init();
 TimerOn();
 TimerSet(1);
     while (1) {
-	
-
 	show();
 	led();
 	joystick();
+	if(balltime >= 8000){
 	ballm();
-   // while(!TimerFlag);
-//	    TimerFlag = 0;
+	balltime = 0;
+	}
+   while(!TimerFlag);
+    TimerFlag = 0;
+    balltime+=10;
     }
     return 1;
 }
