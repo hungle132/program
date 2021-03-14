@@ -240,39 +240,71 @@ unsigned char test = 0x10;
 unsigned char test1 = 0xBF;
 //unsigned long balltime = 0x00;
 unsigned char ballrowarr[1] = {0xFB};
-unsigned char ballcol[2] = {0x08,0x10,0x20,0x40};
+unsigned char ballcol[4] = {0x08,0x10,0x20,0x40};
 unsigned char col = 0x00;
 unsigned char r = 0x00;
-enum balls{startball,bounce,bounce1,bounce2,bounce3,reset} bal;
+unsigned char yflag = 0x00;
+unsigned char xflag = 4;
+unsigned char rflag = 0;
+unsigned char itrow = 0;
+unsigned char itcol = 0;
+enum balls{startball,bounce,bounce1,bounce2,bounce3,bounce4,bounce5,bounce6,bouncecheck,reset} bal;
 void ballm(){
-	//TimerSet(1000);
 	switch(bal){
 	case startball:
 		bal = bounce;
 		break;
 	case bounce:
-			r = 0xFB;
-			col = 0x08;
+			r = ballrowarr[itrow];
+			col = ballcol[itcol];
+			itcol++;
+			xflag--;
 			bal = bounce1;
 
 		break;
 
 	case bounce1:
-		r = 0xFB;
-		col = 0x10;
+		r = ballrowarr[itrow];
+		col = ballcol[itcol];
+		itcol++;
+		xflag--;
 		bal = bounce2;
 		break;
 	case bounce2:
-		r = 0xFB;
-		col = 0x20;
+		r = ballrowarr[itrow];
+		col = ballcol[itcol];
+		itcol++;
+		xflag--;
 		bal = bounce3;
 		break;
 	case bounce3:
-		r = 0xFB;
-		col = 0x40;
-		bal = bounce;
+		r = ballrowarr[itrow];
+		col = ballcol[itcol];
+		xflag--;
+		bal = bouncecheck;
+		break;
+
+	case bouncecheck:
+		if (ballrowarr[itrow] == arr[0] || ballrowarr[itrow] == arr[1] || ballrowarr[itrow] == arr[2]){
+		rflag = 1;
+		col = ballcol[itcol];
+		r = ballrowarr[itrow];
+		itcol--;
+		state = bounce4;
+		}
+		break;
+	case bounce4:
+		col = ballcol[itcol];
+		r = ballrowarr[itrow];
+		itcol--;
+		state = bounce4;
+		break;
+	case bounce5:
+		break;
+	case bounce6:
 		break;
 	case reset:
+		bal = startball;
 		break;
 	default:
 		bal = startball;
@@ -291,6 +323,14 @@ void ballm(){
 	case bounce2:
 	break;
 	case bounce3:
+	break;
+	case bounce4:
+	break;
+	case bounce5:
+	break;
+	case bounce6:
+	break;
+	case bouncecheck:
 	break;
 	case reset:
 	break;
